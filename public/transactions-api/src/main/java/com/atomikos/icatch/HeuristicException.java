@@ -20,4 +20,8 @@ public class HeuristicException extends Exception {
 		super(message);
 	}
 	
+	public HeuristicException(String message, Throwable cause) {
+		super(message, cause);
+	}
+	
 }

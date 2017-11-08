@@ -32,4 +32,8 @@ public class HeurMixedException extends HeuristicException
     {
         super("Heuristic Mixed Exception");
     }
+	
+	public HeurMixedException(Throwable cause) {
+		super("Heuristic Mixed Exception", cause);
+	}
 }

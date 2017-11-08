@@ -24,5 +24,13 @@ public class HeurHazardException extends HeuristicException {
 	public HeurHazardException(String msg) {
 		super(msg);
 	}
+	
+	public HeurHazardException(Throwable cause) {
+		super("Heuristic Hazard Exception", cause);
+	}
+
+	public HeurHazardException(String msg, Throwable cause) {
+		super(msg, cause);
+	}
 
 }

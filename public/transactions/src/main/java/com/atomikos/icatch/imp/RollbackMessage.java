@@ -57,7 +57,7 @@ class RollbackMessage extends PropagationMessage
             if ( indoubt_ ) {
                 // here, participant might be indoubt!
                 // fill in exact heuristic msgs by using buffered effect of proxies
-                HeurHazardException heurh = new HeurHazardException();
+                HeurHazardException heurh = new HeurHazardException(e);
                 throw new PropagationException ( heurh, true );
             }
         }

@@ -388,7 +388,7 @@ public class XAResourceTransaction implements ResourceTransaction, Participant {
 			LOGGER.logWarning(msg, xaerr); // see case 84253
 			if (XAException.XA_RBBASE <= xaerr.errorCode
 					&& xaerr.errorCode <= XAException.XA_RBEND) {
-				throw new RollbackException(msg);
+				throw new RollbackException(msg, xaerr);
 			} else {
 				LOGGER.logError(msg, xaerr);
 				throw new SysException(msg, xaerr);
@@ -474,13 +474,13 @@ public class XAResourceTransaction implements ResourceTransaction, Participant {
 				switch (xaerr.errorCode) {
 				case XAException.XA_HEURHAZ:
 					setState(TxState.HEUR_HAZARD);
-					throw new HeurHazardException();
+					throw new HeurHazardException(xaerr);
 				case XAException.XA_HEURMIX:
 					setState(TxState.HEUR_MIXED);
-					throw new HeurMixedException();
+					throw new HeurMixedException(xaerr);
 				case XAException.XA_HEURCOM:
 					setState(TxState.HEUR_COMMITTED);
-					throw new HeurCommitException();
+					throw new HeurCommitException(xaerr);
 				case XAException.XA_HEURRB:
 					forget();
 					break;
@@ -538,7 +538,7 @@ public class XAResourceTransaction implements ResourceTransaction, Participant {
 			// happens if already rolled back or something else;
 			// in any case the transaction can be trusted to act
 			// as if rollback already happened
-			throw new com.atomikos.icatch.RollbackException(re.getMessage());
+			throw new com.atomikos.icatch.RollbackException(re.getMessage(), re);
 		}
 
 		if (!(this.state.isOneOf(TxState.LOCALLY_DONE, TxState.IN_DOUBT, TxState.HEUR_HAZARD)))
@@ -565,21 +565,21 @@ public class XAResourceTransaction implements ResourceTransaction, Participant {
 					throw new SysException(msg, xaerr);
 				else
 					throw new com.atomikos.icatch.RollbackException(
-							"Already rolled back in resource.");
+							"Already rolled back in resource.", xaerr);
 			} else {
 				switch (xaerr.errorCode) {
 				case XAException.XA_HEURHAZ:
 					setState(TxState.HEUR_HAZARD);
-					throw new HeurHazardException();
+					throw new HeurHazardException(xaerr);
 				case XAException.XA_HEURMIX:
 					setState(TxState.HEUR_MIXED);
-					throw new HeurMixedException();
+					throw new HeurMixedException(xaerr);
 				case XAException.XA_HEURCOM:
 					forget();
 					break;
 				case XAException.XA_HEURRB:
 					setState(TxState.HEUR_ABORTED);
-					throw new HeurRollbackException();
+					throw new HeurRollbackException(xaerr);
 				case XAException.XAER_NOTA:
 					if (!onePhase) {
 						// see case 21552

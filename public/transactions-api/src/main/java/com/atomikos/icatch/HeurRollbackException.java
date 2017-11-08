@@ -20,5 +20,9 @@ public class HeurRollbackException extends HeuristicException {
 	public HeurRollbackException() {
 		super("Heuristic Rollback Exception");
 	}
+	
+	public HeurRollbackException(Throwable cause) {
+		super("Heuristic Rollback Exception", cause);
+	}
 
 }
