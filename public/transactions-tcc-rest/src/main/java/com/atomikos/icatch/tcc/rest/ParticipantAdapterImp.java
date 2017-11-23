@@ -51,7 +51,7 @@ public class ParticipantAdapterImp implements ParticipantAdapter {
 
 		} catch (WebApplicationException e) {
 			if (e.getResponse().getStatus() == 404) {
-				throw new HeurRollbackException();
+				throw new HeurRollbackException(e);
 			} else {
 				throw e;
 			}

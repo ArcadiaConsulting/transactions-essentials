@@ -19,5 +19,9 @@ public class HeurCommitException extends HeuristicException {
 	public HeurCommitException() {
 		super("Heuristic Commit Exception");
 	}
+	
+	public HeurCommitException(Throwable cause) {
+		super("Heuristic Commit Exception", cause);
+	}
 
 }

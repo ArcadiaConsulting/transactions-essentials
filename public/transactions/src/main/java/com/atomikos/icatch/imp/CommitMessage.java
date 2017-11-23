@@ -63,7 +63,7 @@ class CommitMessage extends PropagationMessage
             // of participant proxies.
             String msg = "Unexpected error in commit";
             LOGGER.logError ( msg, e );
-            HeurHazardException heurh = new HeurHazardException();
+            HeurHazardException heurh = new HeurHazardException(e);
             throw new PropagationException ( heurh, true );
         }
     }

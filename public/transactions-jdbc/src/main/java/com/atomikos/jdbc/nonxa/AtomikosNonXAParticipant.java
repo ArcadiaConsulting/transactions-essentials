@@ -123,7 +123,7 @@ class AtomikosNonXAParticipant implements Participant, Serializable
                  LOGGER.logError ( "Error in non-XA commit", e );
                  //see case 30752: don't throw HAZARD because retries are probably useless
                  //and the connection won't be reused by the pool but destroyed instead
-                 throw new HeurMixedException();
+                 throw new HeurMixedException(e);
              }
         }
     }
@@ -148,7 +148,7 @@ class AtomikosNonXAParticipant implements Participant, Serializable
                 LOGGER.logError ( "Error in non-XA rollback", e );
                 //see case 30752: don't throw HAZARD because retries are probably useless
                 //and the connection won't be reused by the pool but destroyed instead
-                throw new HeurMixedException();
+                throw new HeurMixedException(e);
             }
         }
     }

@@ -127,7 +127,7 @@ class ActiveStateHandler extends CoordinatorStateHandler
 					}});
 
             } catch ( HeurCommitException hc ) {
-                throw new HeurMixedException();
+                throw new HeurMixedException(hc);
             }
 
             throw new RollbackException ( "Orphans detected." );
@@ -151,7 +151,7 @@ class ActiveStateHandler extends CoordinatorStateHandler
 					throw new RollbackException ( msg , error);
         		} catch ( HeurCommitException e ) {
 					LOGGER.logError ( "Illegal heuristic commit during rollback before prepare:" + e );
-					throw new HeurMixedException();
+					throw new HeurMixedException(e);
 				}
         	}
             count = participants.size ();

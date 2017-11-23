@@ -378,12 +378,17 @@ abstract class CoordinatorStateHandler
             int res = commitresult.getResult ();
 
             if ( res != TerminationResult.ALL_OK ) {
-
+            	
+            	Throwable cause = null;
+            	if ( commitresult.getReplies()!=null && !commitresult.getReplies().empty() 
+            			&& commitresult.getReplies().peek().getException()!=null)
+            		cause = commitresult.getReplies().peek().getException();
+            	
                 if ( res == TerminationResult.HEUR_MIXED ) {
                 	Set<Participant> hazards = commitresult.getPossiblyIndoubts ();
                     nextStateHandler = new HeurMixedStateHandler ( this, hazards );
                     coordinator_.setStateHandler ( nextStateHandler );
-                    throw new HeurMixedException();
+                    throw new HeurMixedException(cause);
                 }
 
                 else if ( res == TerminationResult.ROLLBACK ) {
@@ -397,7 +402,7 @@ abstract class CoordinatorStateHandler
                     // Here, we do NOT need to add extra information, since ALL
                     // participants agreed to rollback. 
                     // Therefore, we need not worry about who aborted and who committed.
-                    throw new HeurRollbackException();
+                    throw new HeurRollbackException(cause);
 
                 }
 
@@ -405,7 +410,7 @@ abstract class CoordinatorStateHandler
                     Set<Participant> hazards = commitresult.getPossiblyIndoubts ();
                     nextStateHandler = new HeurHazardStateHandler ( this, hazards );
                     coordinator_.setStateHandler ( nextStateHandler );
-                    throw new HeurHazardException();
+                    throw new HeurHazardException(cause);
                 }
 
             } else {
@@ -475,22 +480,28 @@ abstract class CoordinatorStateHandler
             // check results, but we only care if we are indoubt.
             // otherwise, we don't mind any remaining indoubts.
             if ( indoubt && res != TerminationResult.ALL_OK ) {
+            	
+            	Throwable cause = null;
+            	if ( rollbackresult.getReplies()!=null && !rollbackresult.getReplies().empty() 
+            			&& rollbackresult.getReplies().peek().getException()!=null)
+            		cause = rollbackresult.getReplies().peek().getException();
+            	
                 if ( res == TerminationResult.HEUR_MIXED ) {
                     Set<Participant> hazards = rollbackresult.getPossiblyIndoubts ();
                     nextStateHandler = new HeurMixedStateHandler ( this, hazards );
                     coordinator_.setStateHandler ( nextStateHandler );
-                    throw new HeurMixedException();
+                    throw new HeurMixedException(cause);
                 } else if ( res == TerminationResult.HEUR_COMMIT ) {
                     nextStateHandler = new HeurCommittedStateHandler ( this );
                     coordinator_.setStateHandler ( nextStateHandler );
                     // NO extra per-participant state mappings, since ALL
                     // participants are heuristically committed.
-                    throw new HeurCommitException();
+                    throw new HeurCommitException(cause);
                 } else if ( res == TerminationResult.HEUR_HAZARD ) {
                     Set<Participant> hazards = rollbackresult.getPossiblyIndoubts ();
                     nextStateHandler = new HeurHazardStateHandler ( this, hazards );
                     coordinator_.setStateHandler ( nextStateHandler );
-                    throw new HeurHazardException();
+                    throw new HeurHazardException(cause);
                 }
             }
 
